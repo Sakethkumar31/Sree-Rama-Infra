@@ -1,0 +1,1232 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sree Rama Infra | Premium Real Estate</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-symbol">SR</div>
+                <div class="logo-text">
+                    <span class="logo-main">Sree Rama</span>
+                    <span class="logo-sub">Infra</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#properties">Properties</a></li>
+                <li><a href="#map">Map View</a></li>
+                <li><a href="#post-property">Post Property</a></li>
+                <li><a href="#calculator">Calculators</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="#contact" class="btn-nav">Get Started</a>
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">Premium Real Estate</div>
+            <div class="campaign-banner">
+                <span class="campaign-tag">Campaign</span>
+                <p>Featured with <strong>KalyanaShobha.in</strong> for trusted reach and carefully managed property enquiries.</p>
+            </div>
+            <h1>Find Your <span class="text-gold">Dream Property</span></h1>
+            <p>Discover luxury homes, commercial spaces, and premium investments with every enquiry routed through our admin team for a secure experience.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="stat-num">500+</span>
+                    <span class="stat-text">Properties</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="stat-num">10+</span>
+                    <span class="stat-text">Years</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="stat-num">200+</span>
+                    <span class="stat-text">Clients</span>
+                </div>
+            </div>
+            <div class="hero-buttons">
+                <a href="#properties" class="btn btn-primary">Explore Properties</a>
+                <a href="https://wa.me/918956923456" class="btn btn-secondary" target="_blank" rel="noreferrer"><i class="fab fa-whatsapp"></i> Chat With Admin</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll Down</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+<!-- Properties Section -->
+    <section id="properties" class="properties-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">Our Portfolio</span>
+                <h2>Featured Properties</h2>
+                <p>Find your perfect property from our curated collection</p>
+            </div>
+            
+            <div class="property-filters">
+                <button class="filter-btn active" data-purpose="all">
+                    <i class="fas fa-th-large"></i> All
+                </button>
+                <button class="filter-btn" data-purpose="buy">
+                    <i class="fas fa-key"></i> Buy
+                </button>
+                <button class="filter-btn" data-purpose="rent">
+                    <i class="fas fa-home"></i> Rent
+                </button>
+                <button class="filter-btn" data-purpose="sell">
+                    <i class="fas fa-tag"></i> Sell
+                </button>
+            </div>
+
+            <div class="properties-grid" id="properties-grid">
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section id="map" class="map-section">
+        <div class="section-header">
+            <span class="section-subtitle">Location Map</span>
+            <h2>Property Locations</h2>
+            <p>Explore properties on the map with precise locations</p>
+        </div>
+        <div class="map-container">
+            <div id="property-map"></div>
+            <div class="map-legend">
+                <div class="legend-item"><span class="legend-dot buy"></span> Buy</div>
+                <div class="legend-item"><span class="legend-dot rent"></span> Rent</div>
+                <div class="legend-item"><span class="legend-dot sell"></span> Sell</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="about-container">
+            <div class="about-content">
+                <span class="section-subtitle">About Us</span>
+                <h2>Sree Rama Infra</h2>
+                <p>Sree Rama Infra is a real estate company based in Hyderabad. We help clients find residential and commercial properties that match their needs and budget.</p>
+                <p>Whether you're looking to buy, sell, or rent a property, we assist you throughout the process. Our goal is to make property transactions simple.</p>
+                <div class="about-features">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Property Solutions</h4>
+                            <p>Find right property for you</p>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Direct Deals</h4>
+                            <p>Connect with property owners</p>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>Easy Process</h4>
+                            <p>Simple and straightforward</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600" alt="About Us">
+                <div class="about-image-overlay"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services">
+        <div class="section-header">
+            <span class="section-subtitle">What We Offer</span>
+            <h2>Our Services</h2>
+            <p>Comprehensive real estate solutions for all your needs</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <h3>Buy Property</h3>
+                <p>Find your dream home from our exclusive collection of premium properties in Hyderabad's best locations.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3>Rent Property</h3>
+                <p>Explore rental options ranging from luxury villas to affordable apartments that suit your lifestyle.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h3>Sell Property</h3>
+                <p>Sell your property quickly at the best market rates with our professional marketing services.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <h3>Consultation</h3>
+                <p>Expert advice on property investments, legal documentation, and market trends from professionals.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partners Section -->
+    <section class="partners">
+        <div class="section-header">
+            <span class="section-subtitle">Trusted Partners</span>
+            <h2>Our Associates</h2>
+            <p>We work with the best builders and developers in Hyderabad</p>
+        </div>
+        <div class="partners-container">
+            <div class="partner-logo">
+                <i class="fas fa-building"></i>
+                <span>Prestige Group</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-city"></i>
+                <span>DLF Limited</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-archway"></i>
+                <span>Godrej Properties</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-hospital"></i>
+                <span>Apollo Hospitals</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-university"></i>
+                <span>HDFC Bank</span>
+            </div>
+            <div class="partner-logo">
+                <i class="fas fa-home"></i>
+                <span> Brigade Group</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advanced Search -->
+    <section class="advanced-search">
+        <div class="search-container">
+            <div class="search-header">
+                <i class="fas fa-search"></i>
+                <h3>Find Your Perfect Property</h3>
+            </div>
+            <div class="search-filters">
+                <div class="search-group">
+                    <label>Location</label>
+                    <select id="search-location">
+                        <option value="">All Locations</option>
+                        <option value="Madhapur">Madhapur</option>
+                        <option value="Gachibowli">Gachibowli</option>
+                        <option value="Jubilee Hills">Jubilee Hills</option>
+                        <option value="Banjara Hills">Banjara Hills</option>
+                        <option value="Kukatpally">Kukatpally</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label>Property Type</label>
+                    <select id="search-type">
+                        <option value="">All Types</option>
+                        <option value="Apartment">Apartment</option>
+                        <option value="Villa">Villa</option>
+                        <option value="Plot">Plot</option>
+                        <option value="House">House</option>
+                        <option value="Penthouse">Penthouse</option>
+                        <option value="Commercial">Commercial</option>
+                    </select>
+                </div>
+                <div class="search-group">
+                    <label>Budget Range</label>
+                    <div class="price-range">
+                        <input type="range" id="price-min" min="1000000" max="100000000" step="500000" value="1000000">
+                        <input type="range" id="price-max" min="1000000" max="100000000" step="500000" value="50000000">
+                        <div class="price-display">
+                            <span id="min-price">₹10 Lakh</span>
+                            <span id="max-price">₹5 Crore</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-group">
+                    <label>Bedrooms</label>
+                    <div class="bedroom-options">
+                        <button class="bed-btn" data-beds="any">Any</button>
+                        <button class="bed-btn" data-beds="1">1+</button>
+                        <button class="bed-btn" data-beds="2">2+</button>
+                        <button class="bed-btn" data-beds="3">3+</button>
+                        <button class="bed-btn" data-beds="4">4+</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary search-btn" onclick="advancedSearch()">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="section-header">
+            <span class="section-subtitle">Client Reviews</span>
+            <h2>What Our Clients Say</h2>
+            <p>Hear from our satisfied customers</p>
+        </div>
+        <div class="testimonials-container">
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h4>Rajesh Kumar</h4>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                </div>
+                <p class="testimonial-text">"Sree Rama Infra helped me find my dream home in Gachibowli. The entire process was smooth and transparent. Highly recommended for property buyers!"</p>
+                <div class="testimonial-property">
+                    <i class="fas fa-home"></i> Bought: 3BHK Apartment
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h4>Priya Sharma</h4>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                </div>
+                <p class="testimonial-text">"Excellent service! They helped me rent out my property within a week at the best market rate. Professional team with great communication."</p>
+                <div class="testimonial-property">
+                    <i class="fas fa-key"></i> Rented: Commercial Space
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-header">
+                    <div class="testimonial-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="testimonial-info">
+                        <h4>Mohammed Akbar</h4>
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="testimonial-quote">
+                        <i class="fas fa-quote-right"></i>
+                    </div>
+                </div>
+                <p class="testimonial-text">"As an NRI, I was hesitant to invest in India. Sree Rama Infra made the entire process seamless. They handled everything from documentation to possession."</p>
+                <div class="testimonial-property">
+                    <i class="fas fa-building"></i> Invested: Villa
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Post/Listing Section -->
+    <section id="post-property" class="post-property-section">
+        <div class="section-header">
+            <span class="section-subtitle">List Your Property</span>
+            <h2>Post Your Property</h2>
+            <p>Reach thousands of potential buyers and tenants</p>
+        </div>
+        <div class="post-property-container">
+            <form class="post-property-form" id="post-property-form">
+                <div class="form-section">
+                    <h3><i class="fas fa-home"></i> Basic Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Property Title *</label>
+                            <input type="text" name="title" placeholder="e.g. Luxury 3BHK Apartment in Gachibowli" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Purpose *</label>
+                            <select name="purpose" required>
+                                <option value="">Select Purpose</option>
+                                <option value="buy">For Sale</option>
+                                <option value="rent">For Rent</option>
+                                <option value="sell">I Want to Sell</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Property Type *</label>
+                            <select name="type" required>
+                                <option value="">Select Type</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Villa">Villa</option>
+                                <option value="House">Individual House</option>
+                                <option value="Plot">Plot/Land</option>
+                                <option value="Penthouse">Penthouse</option>
+                                <option value="Studio">Studio</option>
+                                <option value="Commercial">Commercial Space</option>
+                                <option value="Office">Office Space</option>
+                                <option value="Shop">Shop/Showroom</option>
+                                <option value="Warehouse">Warehouse</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (₹) *</label>
+                            <input type="number" name="price" placeholder="e.g. 5000000" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-map-marker-alt"></i> Location Details</h3>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Property Address *</label>
+                            <input type="text" name="address" placeholder="Full address with street name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>City *</label>
+                            <input type="text" name="city" value="Hyderabad" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Locality/Area *</label>
+                            <input type="text" name="location" placeholder="e.g. Gachibowli, Madhapur" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Landmark</label>
+                            <input type="text" name="landmark" placeholder="Nearby landmark">
+                        </div>
+                        <div class="form-group">
+                            <label>Pincode</label>
+                            <input type="text" name="pincode" placeholder="e.g. 500032">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-ruler-combined"></i> Property Details</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Bedrooms</label>
+                            <input type="number" name="bedrooms" placeholder="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Bathrooms</label>
+                            <input type="number" name="bathrooms" placeholder="0" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Super Built-up Area (sqft) *</label>
+                            <input type="number" name="sqft" placeholder="e.g. 1500" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Carpet Area (sqft)</label>
+                            <input type="number" name="carpetArea" placeholder="e.g. 1200">
+                        </div>
+                        <div class="form-group">
+                            <label>Floor</label>
+                            <input type="text" name="floor" placeholder="e.g. 5">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Floors</label>
+                            <input type="text" name="totalFloors" placeholder="e.g. 15">
+                        </div>
+                        <div class="form-group">
+                            <label>Facing</label>
+                            <select name="facing">
+                                <option value="">Select Facing</option>
+                                <option value="North">North</option>
+                                <option value="South">South</option>
+                                <option value="East">East</option>
+                                <option value="West">West</option>
+                                <option value="North-East">North-East</option>
+                                <option value="North-West">North-West</option>
+                                <option value="South-East">South-East</option>
+                                <option value="South-West">South-West</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Property Age</label>
+                            <select name="propertyAge">
+                                <option value="">Select Age</option>
+                                <option value="New Construction">New Construction (0-1 years)</option>
+                                <option value="1-5 years">1-5 years</option>
+                                <option value="5-10 years">5-10 years</option>
+                                <option value="10-20 years">10-20 years</option>
+                                <option value="20+ years">20+ years</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ownership</label>
+                            <select name="ownership">
+                                <option value="">Select Ownership</option>
+                                <option value="Freehold">Freehold</option>
+                                <option value="Leasehold">Leasehold</option>
+                                <option value="Co-operative Society">Co-operative Society</option>
+                                <option value="Power of Attorney">Power of Attorney</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Availability Status</label>
+                            <select name="status">
+                                <option value="Available">Available</option>
+                                <option value="Under Construction">Under Construction</option>
+                                <option value="Ready to Move">Ready to Move</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-list"></i> Amenities & Features</h3>
+                    <div class="amenities-grid">
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Lift"> <span>Lift</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Parking"> <span>Parking</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Security"> <span>24/7 Security</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Power Backup"> <span>Power Backup</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Water Supply"> <span>Water Supply</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Garden"> <span>Garden</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Club House"> <span>Club House</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Swimming Pool"> <span>Swimming Pool</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Gym"> <span>Gym/Fitness</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Park"> <span>Park</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Maintenance"> <span>Maintenance Staff</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Internet"> <span>Internet/Wi-Fi</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="AC"> <span>Air Conditioning</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Furnished"> <span>Furnished</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Gas Pipeline"> <span>Gas Pipeline</span></label>
+                        <label class="checkbox-label"><input type="checkbox" name="amenities" value="Shopping Mall"> <span>Near Shopping Mall</span></label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-sliders-h"></i> Listing Highlights</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Furnishing</label>
+                            <select name="furnishStatus">
+                                <option value="">Select Furnishing</option>
+                                <option value="Unfurnished">Unfurnished</option>
+                                <option value="Semi-Furnished">Semi-Furnished</option>
+                                <option value="Fully Furnished">Fully Furnished</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Parking</label>
+                            <input type="text" name="parking" placeholder="e.g. 1 Covered Car Park">
+                        </div>
+                        <div class="form-group">
+                            <label>Maintenance / Month (Rs)</label>
+                            <input type="number" name="maintenanceCost" placeholder="e.g. 3500" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Brokerage</label>
+                            <input type="text" name="brokerage" placeholder="e.g. No Brokerage or 1 Month Rent">
+                        </div>
+                        <div class="form-group">
+                            <label>Available From</label>
+                            <input type="text" name="availableFrom" placeholder="e.g. Immediate or 01 Apr 2026">
+                        </div>
+                        <div class="form-group">
+                            <label>Listed By</label>
+                            <select name="listedBy">
+                                <option value="Owner">Owner</option>
+                                <option value="Builder">Builder</option>
+                                <option value="Agent">Agent</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Plot Area</label>
+                            <input type="text" name="plotArea" placeholder="e.g. 2400 sq.ft">
+                        </div>
+                        <div class="form-group">
+                            <label>Dimensions</label>
+                            <input type="text" name="dimension" placeholder="e.g. 40 x 60 ft">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-map-pin"></i> Nearby & Location Extras</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nearby School</label>
+                            <input type="text" name="nearbySchool" placeholder="e.g. 1 km">
+                        </div>
+                        <div class="form-group">
+                            <label>Nearby Hospital</label>
+                            <input type="text" name="nearbyHospital" placeholder="e.g. 2 km">
+                        </div>
+                        <div class="form-group">
+                            <label>Nearby Metro</label>
+                            <input type="text" name="nearbyMetro" placeholder="e.g. 800 m">
+                        </div>
+                        <div class="form-group">
+                            <label>Nearby Market</label>
+                            <input type="text" name="nearbyMarket" placeholder="e.g. 500 m">
+                        </div>
+                        <div class="form-group">
+                            <label>Latitude</label>
+                            <input type="number" name="latitude" placeholder="e.g. 17.3850" step="0.0001">
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude</label>
+                            <input type="number" name="longitude" placeholder="e.g. 78.4867" step="0.0001">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-image"></i> Property Images</h3>
+                    <div class="image-upload-area">
+                        <input type="file" id="property-images" name="images" multiple accept="image/*" onchange="previewImages(event)">
+                        <label for="property-images" class="upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Click to upload images</span>
+                            <small>PNG, JPG up to 10MB each (max 10 images)</small>
+                        </label>
+                        <div class="image-preview-grid" id="image-preview-grid"></div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Image URLs</label>
+                            <input type="text" name="imageGallery" placeholder="Paste image URLs separated by commas">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Video Tour URL</label>
+                            <input type="url" name="videoTourUrl" placeholder="https://...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-user"></i> Owner Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Your Name *</label>
+                            <input type="text" name="ownerName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number *</label>
+                            <input type="tel" name="ownerPhone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="ownerEmail">
+                        </div>
+                        <div class="form-group">
+                            <label>Property Description</label>
+                            <textarea name="description" rows="4" placeholder="Describe your property in detail..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Property
+                    </button>
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+                <p class="form-note">Seller details are private. Listings appear in Featured Properties only after admin approval.</p>
+            </form>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section id="calculator" class="calculator-section">
+        <div class="section-header">
+            <span class="section-subtitle">Property Tools</span>
+            <h2>Property Calculators</h2>
+            <p>Calculate your EMI, property value, and investment returns</p>
+        </div>
+        
+        <div class="calculator-container">
+            <!-- EMI Calculator -->
+            <div class="calculator-card">
+                <div class="calculator-header">
+                    <i class="fas fa-calculator"></i>
+                    <h3>EMI Calculator</h3>
+                </div>
+                <div class="calculator-body">
+                    <div class="input-group">
+                        <label>Property Price (₹)</label>
+                        <input type="number" id="property-price" placeholder="Enter property price" value="5000000">
+                    </div>
+                    <div class="input-group">
+                        <label>Down Payment (₹)</label>
+                        <input type="number" id="down-payment" placeholder="Enter down payment" value="1000000">
+                    </div>
+                    <div class="input-group">
+                        <label>Interest Rate (%)</label>
+                        <input type="number" id="interest-rate" placeholder="Enter interest rate" value="8.5" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Loan Tenure (Years)</label>
+                        <input type="range" id="loan-tenure" min="1" max="30" value="20" oninput="updateTenure()">
+                        <span class="range-value" id="tenure-value">20 years</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateEMI()">Calculate EMI</button>
+                    <div class="result-box" id="emi-result">
+                        <div class="result-item">
+                            <span>Monthly EMI</span>
+                            <span class="result-value" id="monthly-emi">₹0</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Interest</span>
+                            <span class="result-value" id="total-interest">₹0</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Total Payment</span>
+                            <span class="result-value" id="total-payment">₹0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rental Yield Calculator -->
+            <div class="calculator-card">
+                <div class="calculator-header">
+                    <i class="fas fa-percentage"></i>
+                    <h3>Rental Yield Calculator</h3>
+                </div>
+                <div class="calculator-body">
+                    <div class="input-group">
+                        <label>Property Price (₹)</label>
+                        <input type="number" id="rental-property-price" placeholder="Enter property price" value="5000000">
+                    </div>
+                    <div class="input-group">
+                        <label>Monthly Rent (₹)</label>
+                        <input type="number" id="monthly-rent" placeholder="Enter monthly rent" value="25000">
+                    </div>
+                    <div class="input-group">
+                        <label>Annual Maintenance (₹)</label>
+                        <input type="number" id="maintenance-cost" placeholder="Enter annual maintenance" value="50000">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateYield()">Calculate Yield</button>
+                    <div class="result-box" id="yield-result">
+                        <div class="result-item">
+                            <span>Annual Rental Income</span>
+                            <span class="result-value" id="annual-income">₹0</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Gross Yield</span>
+                            <span class="result-value" id="gross-yield">0%</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Net Yield</span>
+                            <span class="result-value" id="net-yield">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loan Eligibility Calculator -->
+            <div class="calculator-card">
+                <div class="calculator-header">
+                    <i class="fas fa-home"></i>
+                    <h3>Loan Eligibility</h3>
+                </div>
+                <div class="calculator-body">
+                    <div class="input-group">
+                        <label>Monthly Income (₹)</label>
+                        <input type="number" id="monthly-income" placeholder="Enter monthly income" value="100000">
+                    </div>
+                    <div class="input-group">
+                        <label>Existing EMIs (₹)</label>
+                        <input type="number" id="existing-emis" placeholder="Enter existing EMIs" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Interest Rate (%)</label>
+                        <input type="number" id="eligibility-rate" placeholder="Enter interest rate" value="8.5" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Loan Tenure (Years)</label>
+                        <input type="range" id="eligibility-tenure" min="1" max="30" value="20" oninput="updateEligibilityTenure()">
+                        <span class="range-value" id="eligibility-tenure-value">20 years</span>
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateEligibility()">Check Eligibility</button>
+                    <div class="result-box" id="eligibility-result">
+                        <div class="result-item">
+                            <span>Maximum Loan Amount</span>
+                            <span class="result-value" id="max-loan">₹0</span>
+                        </div>
+                        <div class="result-item">
+                            <span>Eligible Property Value</span>
+                            <span class="result-value" id="eligible-property">₹0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="section-header">
+            <span class="section-subtitle">Get In Touch</span>
+            <h2>Contact Us</h2>
+            <p>We'd love to hear from you</p>
+        </div>
+        <div class="contact-container">
+            <div class="contact-info">
+                <div class="contact-item contact-highlight">
+                    <div class="contact-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h4>Administrator Desk</h4>
+                        <p>Sanjay Kumar reviews listings, manages buyer conversations, and keeps seller details private.</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <h4>Address</h4>
+                        <p>123 Business District, Hyderabad, Telangana 500001</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <h4>Phone</h4>
+                        <p>+91 89569 23456</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h4>Email</h4>
+                        <p>sanjaykumaarsss@gmail.com</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div>
+                        <h4>WhatsApp Support</h4>
+                        <p>Message admin directly. We do not connect buyer and seller outside our managed flow.</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <div>
+                        <h4>Campaign Spotlight</h4>
+                        <p>KalyanaShobha.in is currently running as our featured campaign partner.</p>
+                    </div>
+                </div>
+                <div class="contact-social">
+                    <a href="https://wa.me/918956923456" class="social-icon" target="_blank" rel="noreferrer"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <form class="contact-form" id="contact-form">
+                <div class="form-intro-card">
+                    <h3>Tell us what you need</h3>
+                    <p>Share your enquiry once. Our team will contact you soon with the right next steps.</p>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Your Email" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="tel" name="phone" placeholder="Your Phone Number" required>
+                </div>
+                <div class="form-group">
+                    <textarea name="message" placeholder="Your Message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <div class="logo-symbol">SR</div>
+                    <div class="logo-text">
+                        <span class="logo-main">Sree Rama</span>
+                        <span class="logo-sub">Infra</span>
+                    </div>
+                </div>
+                <p>Your trusted partner in real estate. We help you find your dream property with ease, moderation, and admin-managed communication.</p>
+                <p>Admin Contact: +91 89569 23456 | sanjaykumaarsss@gmail.com</p>
+                <div class="social-links">
+                    <a href="https://wa.me/918956923456" target="_blank" rel="noreferrer"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#properties">Properties</a></li>
+                    <li><a href="#map">Map View</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="/admin">Admin Panel</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Property Types</h3>
+                <ul>
+                    <li><a href="#properties">Apartments</a></li>
+                    <li><a href="#properties">Villas</a></li>
+                    <li><a href="#properties">Commercial</a></li>
+                    <li><a href="#properties">Plots</a></li>
+                    <li><a href="#properties">Penthouse</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe for curated property updates and campaign highlights from KalyanaShobha.in.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email">
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Sree Rama Infra. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chat-widget">
+        <div class="chat-header" id="chat-header">
+            <div class="chat-header-content">
+                <i class="fas fa-comments"></i>
+                <span>Quick Inquiry</span>
+            </div>
+            <i class="fas fa-times chat-close" id="chat-close"></i>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-messages" id="chat-messages">
+                <div class="chat-message bot">
+                    <p>Hello, this is the Sree Rama Infra admin desk.</p>
+                    <p>Share your requirement and our team will coordinate the next steps for you.</p>
+                </div>
+            </div>
+            <div class="chat-quick-actions" id="chat-quick-actions">
+                <button type="button" class="chat-chip" data-message="I want to buy a property in Hyderabad.">Buy Property</button>
+                <button type="button" class="chat-chip" data-message="I want to rent a property and need help.">Rent Property</button>
+                <button type="button" class="chat-chip" data-message="I want to post my property for approval.">Post Listing</button>
+                <button type="button" class="chat-chip" data-message="I need a callback from the admin team.">Request Callback</button>
+            </div>
+            <div class="chat-profile-card" id="chat-profile-card">
+                <div class="chat-profile-copy">
+                    <strong id="chat-profile-name">Start your chat</strong>
+                    <span id="chat-profile-email">Tell us your name and email once, then continue chatting.</span>
+                </div>
+                <button type="button" class="chat-link-btn secondary" id="chat-edit-profile">Edit</button>
+            </div>
+            <form class="chat-form" id="chat-form">
+                <div class="chat-identity-grid" id="chat-identity-grid">
+                    <input type="text" id="chat-name" placeholder="Your Name" required>
+                    <input type="email" id="chat-email" placeholder="Your Email" required>
+                </div>
+                <textarea id="chat-message" placeholder="Tell admin what kind of property or help you need..." rows="2" required></textarea>
+                <button type="submit" class="btn-chat">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </form>
+            <div class="chat-footer-actions">
+                <a href="https://wa.me/918956923456" target="_blank" rel="noreferrer" class="chat-link-btn">
+                    <i class="fab fa-whatsapp"></i> Continue on WhatsApp
+                </a>
+                <span class="chat-status-note">Seller and buyer details stay private. Admin manages the conversation.</span>
+            </div>
+        </div>
+    </div>
+    <button class="chat-toggle" id="chat-toggle">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- Property Quick View Modal - Full Details -->
+    <div class="property-modal" id="property-modal">
+        <div class="modal-overlay" onclick="closeModal()"></div>
+        <div class="modal-content modal-full-details">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header-image">
+                <img id="modal-property-image" src="" alt="Property">
+                <div class="modal-header-overlay">
+                    <span class="modal-type-badge" id="modal-property-type"></span>
+                    <span class="modal-status-badge" id="modal-property-status"></span>
+                </div>
+            </div>
+            <div class="modal-body-full">
+                <div class="modal-main-info">
+                    <div class="modal-price" id="modal-property-price"></div>
+                    <h2 class="modal-title" id="modal-property-title"></h2>
+                    <p class="modal-address">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="modal-property-address"></span>
+                    </p>
+                    <p class="modal-landmark">
+                        <i class="fas fa-location-arrow"></i>
+                        <span id="modal-property-landmark"></span>
+                    </p>
+                </div>
+                
+                <div class="property-sheet">
+                    <div class="property-sheet-section">
+                        <h4><i class="fas fa-building"></i> Property Overview</h4>
+                        <div class="property-sheet-grid">
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Type</span>
+                                <span class="property-sheet-value" id="modal-property-type2"></span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Bedrooms</span>
+                                <span class="property-sheet-value" id="modal-bedrooms"></span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Bathrooms</span>
+                                <span class="property-sheet-value" id="modal-bathrooms"></span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Super Area</span>
+                                <span class="property-sheet-value"><span id="modal-sqft"></span> sqft</span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Carpet Area</span>
+                                <span class="property-sheet-value" id="modal-carpet-area"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="property-sheet-section">
+                        <h4><i class="fas fa-list-check"></i> Building & Status</h4>
+                        <div class="property-sheet-grid">
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Floor</span>
+                                <span class="property-sheet-value" id="modal-floor"></span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Facing</span>
+                                <span class="property-sheet-value" id="modal-facing"></span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Property Age</span>
+                                <span class="property-sheet-value" id="modal-property-age"></span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Ownership</span>
+                                <span class="property-sheet-value" id="modal-ownership"></span>
+                            </div>
+                            <div class="property-sheet-row">
+                                <span class="property-sheet-label">Status</span>
+                                <span class="property-sheet-value" id="modal-status"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pre-Booking Section -->
+                <div class="prebooking-section" id="prebooking-section" style="display: none;">
+                    <div class="prebooking-badge">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Pre-Booking Open</span>
+                    </div>
+                    <div class="prebooking-details">
+                        <p>Booking Amount: <strong id="modal-booking-amount"></strong></p>
+                        <p>Expected Delivery: <strong id="modal-delivery-date"></strong></p>
+                    </div>
+                </div>
+
+                <!-- Legal & Approval Section -->
+                <div class="legal-section">
+                    <h4><i class="fas fa-gavel"></i> Legal & Approvals</h4>
+                    <div class="legal-grid">
+                        <div class="legal-item">
+                            <span class="legal-label">Litigation:</span>
+                            <span class="legal-value" id="modal-litigation"></span>
+                        </div>
+                        <div class="legal-item">
+                            <span class="legal-label">Approved By:</span>
+                            <span class="legal-value" id="modal-approved"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legal-section">
+                    <h4><i class="fas fa-star-half-alt"></i> Listing Highlights</h4>
+                    <div class="legal-grid">
+                        <div class="legal-item">
+                            <span class="legal-label">Furnishing:</span>
+                            <span class="legal-value" id="modal-furnish-status"></span>
+                        </div>
+                        <div class="legal-item">
+                            <span class="legal-label">Parking:</span>
+                            <span class="legal-value" id="modal-parking"></span>
+                        </div>
+                        <div class="legal-item">
+                            <span class="legal-label">Maintenance:</span>
+                            <span class="legal-value" id="modal-maintenance"></span>
+                        </div>
+                        <div class="legal-item">
+                            <span class="legal-label">Brokerage:</span>
+                            <span class="legal-value" id="modal-brokerage"></span>
+                        </div>
+                        <div class="legal-item">
+                            <span class="legal-label">Available From:</span>
+                            <span class="legal-value" id="modal-available-from"></span>
+                        </div>
+                        <div class="legal-item">
+                            <span class="legal-label">Listed By:</span>
+                            <span class="legal-value" id="modal-listed-by"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Amenities Section -->
+                <div class="amenities-section">
+                    <h4><i class="fas fa-star"></i> Amenities</h4>
+                    <div class="amenities-list" id="modal-amenities">
+                    </div>
+                </div>
+
+                <!-- Nearby Facilities Section -->
+                <div class="nearby-section">
+                    <h4><i class="fas fa-map"></i> Nearby Facilities</h4>
+                    <div class="nearby-grid" id="modal-nearby">
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="modal-description-full">
+                    <h4><i class="fas fa-info-circle"></i> Description</h4>
+                    <p id="modal-property-description"></p>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="contactForProperty()">
+                        <i class="fas fa-phone"></i> Enquire With Admin
+                    </button>
+                    <button class="btn btn-secondary" onclick="openWhatsAppForProperty()">
+                        <i class="fab fa-whatsapp"></i> WhatsApp Admin
+                    </button>
+                </div>
+                <div class="interest-form-panel">
+                    <h4><i class="fas fa-heart"></i> Register Interest</h4>
+                    <p>If you like this property, leave your details once and our team will contact you soon.</p>
+                    <form id="interest-form" class="interest-form">
+                        <input type="text" id="interest-name" placeholder="Your Name" required>
+                        <input type="email" id="interest-email" placeholder="Your Email">
+                        <input type="tel" id="interest-phone" placeholder="Your Phone Number">
+                        <textarea id="interest-note" rows="3" placeholder="Optional note for our admin team"></textarea>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-heart"></i> Save My Interest
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Favorites Floating Button -->
+    <div class="favorites-btn" onclick="toggleFavoritesPanel()">
+        <i class="fas fa-heart"></i>
+        <span class="favorites-count" id="favorites-count">0</span>
+    </div>
+
+    <!-- Favorites Panel -->
+    <div class="favorites-panel" id="favorites-panel">
+        <div class="favorites-header">
+            <h3>Liked Properties</h3>
+            <button onclick="toggleFavoritesPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="favorites-list" id="favorites-list">
+            <p class="no-favorites">No liked properties yet</p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

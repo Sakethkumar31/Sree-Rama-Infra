@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sree Rama Infra Admin Workspace</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="admin-body">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-symbol">SR</div>
+                <div class="logo-text">
+                    <span class="logo-main">Sree Rama</span>
+                    <span class="logo-sub">Workspace</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/#properties">Public Site</a></li>
+                <li><a href="#pending-page">New Listings</a></li>
+                <li><a href="#editor-page">Edit Listing</a></li>
+                <li><a href="#conversations-page">Messages</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="https://wa.me/918956923456" class="btn-nav" target="_blank" rel="noreferrer">WhatsApp Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-shell">
+        <section class="admin-hero">
+            <div class="admin-panel-card admin-hero-main">
+                <div class="admin-adminline">
+                    <span class="admin-chip">Admin Desk</span>
+                    <span class="admin-chip">Seller Privacy Protected</span>
+                    <span class="admin-chip">Buyer Communication Moderated</span>
+                </div>
+                <h1>Admin Workspace</h1>
+                <p>Use this page to publish listings, reply to buyer enquiries, and manage seller communication in a simple way.</p>
+                <div class="admin-toolbar">
+                    <button class="admin-btn primary" id="admin-refresh-btn" type="button">
+                        <i class="fas fa-rotate-right"></i> Refresh
+                    </button>
+                    <a class="admin-btn" href="/#properties">View Public Site</a>
+                    <a class="admin-btn" href="https://wa.me/918956923456" target="_blank" rel="noreferrer">Open WhatsApp</a>
+                </div>
+                <div class="admin-stats-grid" id="admin-stats-grid"></div>
+                <p class="admin-note">Listings only appear on the public site after you publish them here.</p>
+            </div>
+            <div class="admin-panel-card admin-hero-side" id="admin-profile-card"></div>
+        </section>
+
+        <section class="admin-panel-card admin-section">
+            <h2>Chat Availability</h2>
+            <p>Turn this on when you are ready to talk directly with buyers in one-to-one conversation.</p>
+            <div class="admin-availability-panel">
+                <label class="admin-availability-toggle">
+                    <input type="checkbox" id="admin-availability-toggle">
+                    <span>I am available for direct buyer conversation</span>
+                </label>
+                <textarea id="admin-availability-note" rows="3" placeholder="Message shown to visitors when direct conversation is off"></textarea>
+                <div class="admin-actions">
+                    <button type="button" class="admin-btn primary" id="save-availability-btn">Save Chat Status</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-pages-nav">
+            <button type="button" class="admin-page-tab active" data-page="overview-page">Home</button>
+            <button type="button" class="admin-page-tab" data-page="pending-page">New Listings</button>
+            <button type="button" class="admin-page-tab" data-page="editor-page">Edit Listing</button>
+            <button type="button" class="admin-page-tab" data-page="approved-page">Live Listings</button>
+            <button type="button" class="admin-page-tab" data-page="conversations-page">Buyer Messages</button>
+            <button type="button" class="admin-page-tab" data-page="followup-page">Follow-Up</button>
+        </section>
+
+        <section class="admin-page active" id="overview-page">
+            <section class="admin-panel-card admin-section">
+                <h2>Today</h2>
+                <p>These are the latest things that need your attention.</p>
+                <div class="admin-list" id="recent-activity"></div>
+            </section>
+            <section class="admin-section-grid">
+                <section class="admin-panel-card admin-section">
+                    <h2>Interested Buyers</h2>
+                    <p>People who liked a property or asked to be contacted.</p>
+                    <div id="interests-table"></div>
+                </section>
+                <section class="admin-panel-card admin-section">
+                    <h2>How This Works</h2>
+                    <p>Simple reminders for handling listings and conversations.</p>
+                    <div id="admin-notes-panel"></div>
+                </section>
+            </section>
+        </section>
+
+        <section class="admin-page" id="pending-page">
+            <section class="admin-panel-card admin-section" id="pending">
+                <h2>New Listings Waiting for Approval</h2>
+                <p>Review seller details and publish only the listings that are ready for buyers.</p>
+                <div class="admin-list" id="pending-properties"></div>
+            </section>
+        </section>
+
+        <section class="admin-page" id="editor-page">
+            <section class="admin-panel-card admin-section" id="editor">
+                <h2>Edit Listing</h2>
+                <p>Choose a listing from any page, then update the details here.</p>
+                <p class="admin-note" id="editor-helper">No listing selected yet. Open a listing and press `Edit Details`.</p>
+                <form id="property-editor-form" class="contact-form">
+                    <input type="hidden" id="editor-property-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="editor-title" placeholder="Property title">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="editor-price" placeholder="Price">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="editor-parking" placeholder="Parking">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="editor-brokerage" placeholder="Brokerage">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="editor-available-from" placeholder="Available from">
+                        </div>
+                        <div class="form-group">
+                            <select id="editor-status">
+                                <option value="approved">Approved</option>
+                                <option value="pending">Pending</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="editor-description" rows="6" placeholder="Description"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Listing
+                    </button>
+                </form>
+            </section>
+        </section>
+
+        <section class="admin-page" id="approved-page">
+            <section class="admin-panel-card admin-section">
+                <h2>Live Listings</h2>
+                <p>These listings are already visible to buyers on the public site.</p>
+                <div class="admin-list" id="approved-properties"></div>
+            </section>
+        </section>
+
+        <section class="admin-page" id="conversations-page">
+            <section class="admin-panel-card admin-section">
+                <h2>Buyer Messages</h2>
+                <p>All chat, enquiry, and interest messages come here for admin follow-up.</p>
+                <div class="admin-filterbar">
+                    <input type="search" id="conversation-search" placeholder="Search buyer, property, phone, or message">
+                    <select id="conversation-source-filter">
+                        <option value="all">All Message Types</option>
+                        <option value="chat">Chat Box</option>
+                        <option value="enquiry">Contact Form</option>
+                        <option value="interest">Property Interest</option>
+                    </select>
+                </div>
+                <div id="conversations-table"></div>
+            </section>
+        </section>
+
+        <section class="admin-page" id="followup-page">
+            <section class="admin-section-grid">
+            <section class="admin-panel-card admin-section">
+                <h2>People to Contact Next</h2>
+                <p>Use this list to quickly contact buyers who are waiting for a reply.</p>
+                <div class="admin-list" id="follow-up-queue"></div>
+            </section>
+            <section class="admin-panel-card admin-section">
+                <h2>Sellers Needing Clarification</h2>
+                <p>These sellers may need to provide more details before their listing can go live.</p>
+                <div class="admin-list" id="seller-support-list"></div>
+            </section>
+        </section>
+        </section>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
