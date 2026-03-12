@@ -17,9 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const ADMIN_WHATSAPP_URL = 'https://wa.me/918956923456';
-const CHAT_STORAGE_KEY = 'sree-rama-chat-history';
 const CHAT_PROFILE_KEY = 'sree-rama-chat-profile';
+const CHAT_SESSION_KEY = 'sree-rama-chat-session';
 let siteMeta = null;
+let activeChatSessionId = localStorage.getItem(CHAT_SESSION_KEY) || '';
+let chatPollTimer = null;
 
 // ========================================
 // NAVBAR SCROLL EFFECT
@@ -167,12 +169,19 @@ async function loadMapLocations() {
                         <div class="map-popup-title">${loc.title}</div>
                         <div class="map-popup-location">${loc.location}</div>
                         <div class="map-popup-price">${loc.price}</div>
+                    </div>
                 </div>
             `;
             
             marker.bindPopup(popupContent);
+            marker.on('click', () => showPropertyDetails(loc.id));
             markers.push(marker);
         });
+
+        if (markers.length > 0) {
+            const group = L.featureGroup(markers);
+            map.fitBounds(group.getBounds().pad(0.15));
+        }
         
     } catch (error) {
         console.error('Error loading map locations:', error);
@@ -213,8 +222,8 @@ function initChatWidget() {
     const quickActions = document.getElementById('chat-quick-actions');
     const editProfileBtn = document.getElementById('chat-edit-profile');
     const messageInput = document.getElementById('chat-message');
-    restoreChatHistory();
     hydrateChatProfile();
+    syncChatSession();
     
     // Toggle chat widget
     if (chatToggle && chatWidget) {
@@ -222,6 +231,10 @@ function initChatWidget() {
             chatWidget.classList.toggle('active');
             if (chatWidget.classList.contains('active')) {
                 chatToggle.style.display = 'none';
+                startChatPolling();
+                syncChatSession();
+            } else {
+                stopChatPolling();
             }
         });
         
@@ -229,6 +242,7 @@ function initChatWidget() {
         chatClose.addEventListener('click', () => {
             chatWidget.classList.remove('active');
             chatToggle.style.display = 'flex';
+            stopChatPolling();
         });
         
         // Header click to toggle
@@ -236,6 +250,7 @@ function initChatWidget() {
             if (e.target !== chatClose) {
                 chatWidget.classList.remove('active');
                 chatToggle.style.display = 'flex';
+                stopChatPolling();
             }
         });
         
@@ -264,12 +279,11 @@ function initChatWidget() {
                 }
 
                 saveChatProfile(name, email);
-                
-                // Add user message
-                appendChatMessage('user', message);
+                appendChatMessage('user', message, null, null, false);
                 
                 // Clear input
                 document.getElementById('chat-message').value = '';
+                autoGrowTextarea(document.getElementById('chat-message'));
                 
                 // Scroll to bottom
                 chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -284,16 +298,28 @@ function initChatWidget() {
                     const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name, email, message })
+                        body: JSON.stringify({
+                            name,
+                            email,
+                            message,
+                            sessionId: activeChatSessionId || undefined
+                        })
                     });
                     const result = await response.json();
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Chat could not be sent.');
+                    }
+
+                    if (result.sessionId) {
+                        activeChatSessionId = result.sessionId;
+                        localStorage.setItem(CHAT_SESSION_KEY, activeChatSessionId);
+                    }
                     removeTypingIndicator();
-                    
-                    // Add bot response after delay
+                    renderChatThread(result.thread?.messages || []);
                     setTimeout(() => {
-                        appendChatMessage('bot', `Thank you, ${name}. ${result.message}`);
+                        appendChatMessage('bot', `Thank you, ${name}. ${result.message}`, null, `ack-${Date.now()}`);
                         chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }, 1000);
+                    }, 500);
                     
                 } catch (error) {
                     removeTypingIndicator();
@@ -374,43 +400,74 @@ function applyMetaToChat() {
     }
 
     if (chatMessages && !chatMessages.querySelector('.chat-message.system')) {
-        const systemMsg = document.createElement('div');
-        systemMsg.className = 'chat-message bot system';
-        systemMsg.innerHTML = `<p>${note}</p>`;
-        chatMessages.appendChild(systemMsg);
+        appendSystemChatMessage(note);
     }
 }
 
-function persistChatMessage(role, text) {
-    const history = JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]');
-    history.push({ role, text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
-    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(history.slice(-8)));
-}
-
-function restoreChatHistory() {
+function appendSystemChatMessage(text) {
     const chatMessages = document.getElementById('chat-messages');
     if (!chatMessages) return;
 
-    const history = JSON.parse(localStorage.getItem(CHAT_STORAGE_KEY) || '[]');
-    history.forEach((entry) => {
-        appendChatMessage(entry.role, entry.text, entry.time, false);
+    const existing = chatMessages.querySelector('.chat-message.system');
+    if (existing) {
+        existing.querySelector('p').textContent = text;
+        return;
+    }
+
+    const systemMsg = document.createElement('div');
+    systemMsg.className = 'chat-message bot system';
+    systemMsg.innerHTML = `<p>${text}</p>`;
+    chatMessages.appendChild(systemMsg);
+}
+
+function renderChatThread(messages) {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+
+    const intro = `
+        <div class="chat-message bot intro">
+            <p>Hello, this is the Sree Rama Infra admin desk.</p>
+            <span class="chat-time">Now</span>
+        </div>
+    `;
+    chatMessages.innerHTML = intro;
+    if (siteMeta?.settings) {
+        const directMode = Boolean(siteMeta.settings.adminAvailable);
+        const note = directMode
+            ? 'Admin is available now for direct one-to-one conversation.'
+            : (siteMeta.settings.availabilityNote || 'Leave your message and our team will respond soon.');
+        appendSystemChatMessage(note);
+    }
+
+    messages.forEach((entry) => {
+        const role = entry.sender === 'admin' ? 'bot' : 'user';
+        appendChatMessage(role, entry.text, formatChatTime(entry.createdAt), entry.id, false);
     });
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function appendChatMessage(role, text, timeLabel, persist = true) {
+function appendChatMessage(role, text, timeLabel, messageId, scroll = true) {
     const chatMessages = document.getElementById('chat-messages');
     if (!chatMessages) return;
+
+    if (messageId && chatMessages.querySelector(`[data-message-id="${messageId}"]`)) {
+        return;
+    }
 
     const message = document.createElement('div');
     message.className = `chat-message ${role}`;
+    if (messageId) {
+        message.dataset.messageId = messageId;
+    }
     message.innerHTML = `
         <p>${text}</p>
         <span class="chat-time">${timeLabel || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
     `;
     chatMessages.appendChild(message);
 
-    if (persist) {
-        persistChatMessage(role, text);
+    if (scroll) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 }
 
@@ -427,6 +484,48 @@ function showTypingIndicator() {
 
 function removeTypingIndicator() {
     document.querySelector('.chat-message.typing')?.remove();
+}
+
+async function syncChatSession() {
+    if (!activeChatSessionId) return;
+
+    try {
+        const response = await fetch(`/api/chat/session/${activeChatSessionId}`);
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Could not load chat thread.');
+        }
+
+        renderChatThread(result.thread?.messages || []);
+    } catch (error) {
+        console.error('Chat sync failed:', error);
+        activeChatSessionId = '';
+        localStorage.removeItem(CHAT_SESSION_KEY);
+    }
+}
+
+function startChatPolling() {
+    stopChatPolling();
+    chatPollTimer = setInterval(() => {
+        syncChatSession();
+    }, 5000);
+}
+
+function stopChatPolling() {
+    if (chatPollTimer) {
+        clearInterval(chatPollTimer);
+        chatPollTimer = null;
+    }
+}
+
+function formatChatTime(value) {
+    if (!value) return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
 function saveChatProfile(name, email) {

@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const express = require('express');
 const path = require('path');
-const { initializeStore, readCollection, writeCollection } = require('./storage');
+const { dataDir, initializeStore, readCollection, writeCollection } = require('./storage');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const ADMIN_PROFILE = {
@@ -44,7 +44,11 @@ app.get('/api/meta', (req, res) => {
     res.json({
         admin: ADMIN_PROFILE,
         campaign: ACTIVE_CAMPAIGN,
-        settings: adminSettings
+        settings: adminSettings,
+        runtime: {
+            dataDir,
+            persistentStorageConfigured: Boolean(process.env.DATA_DIR)
+        }
     });
 });
 
@@ -377,12 +381,15 @@ initializeStore(storeSeeds);
 allProperties = readCollection('properties', storeSeeds.properties);
 let contactLeads = readCollection('contacts', []);
 let chatLeads = readCollection('chats', []);
+let chatSessions = readCollection('sessions', []);
 let newsletterSubscriptions = readCollection('subscriptions', []);
 let propertyInterests = readCollection('interests', []);
 let adminSettings = {
     ...DEFAULT_SETTINGS,
     ...readCollection('settings', DEFAULT_SETTINGS)
 };
+chatSessions = chatSessions.map(normalizeChatSession).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+persistChatSessions();
 
 // Counter for generating unique IDs
 let propertyIdCounter = allProperties.reduce((maxId, property) => {
@@ -399,6 +406,10 @@ function persistContacts() {
 
 function persistChats() {
     writeCollection('chats', chatLeads);
+}
+
+function persistChatSessions() {
+    writeCollection('sessions', chatSessions);
 }
 
 function persistSubscriptions() {
@@ -459,6 +470,110 @@ function normalizePropertyRecord(property) {
     normalizedProperty.nearby = normalizedProperty.nearby || {};
 
     return normalizedProperty;
+}
+
+function normalizeChatMessage(message = {}) {
+    return {
+        id: message.id || crypto.randomUUID(),
+        sender: message.sender === 'admin' ? 'admin' : 'user',
+        text: String(message.text || '').trim(),
+        createdAt: message.createdAt || new Date().toISOString()
+    };
+}
+
+function normalizeChatSession(session = {}) {
+    const messages = Array.isArray(session.messages)
+        ? session.messages.map(normalizeChatMessage).filter((message) => message.text)
+        : [];
+    const userMessages = messages.filter((message) => message.sender === 'user').length;
+    const adminMessages = messages.filter((message) => message.sender === 'admin').length;
+    const lastMessage = messages[messages.length - 1] || null;
+
+    return {
+        id: session.id || crypto.randomUUID(),
+        name: String(session.name || 'Visitor').trim(),
+        email: String(session.email || '').trim().toLowerCase(),
+        phone: String(session.phone || '').trim(),
+        propertyTitle: String(session.propertyTitle || '').trim(),
+        status: session.status || 'open',
+        createdAt: session.createdAt || new Date().toISOString(),
+        updatedAt: session.updatedAt || session.createdAt || new Date().toISOString(),
+        lastViewedByAdminAt: session.lastViewedByAdminAt || null,
+        messages,
+        messageCount: messages.length,
+        userMessageCount: userMessages,
+        adminMessageCount: adminMessages,
+        lastMessageAt: lastMessage?.createdAt || session.updatedAt || session.createdAt || new Date().toISOString(),
+        lastMessageText: lastMessage?.text || ''
+    };
+}
+
+function summarizeChatSession(session = {}) {
+    const normalized = normalizeChatSession(session);
+    return {
+        id: normalized.id,
+        name: normalized.name,
+        email: normalized.email,
+        phone: normalized.phone,
+        propertyTitle: normalized.propertyTitle,
+        status: normalized.status,
+        createdAt: normalized.createdAt,
+        updatedAt: normalized.updatedAt,
+        lastViewedByAdminAt: normalized.lastViewedByAdminAt,
+        lastMessageAt: normalized.lastMessageAt,
+        lastMessageText: normalized.lastMessageText,
+        messageCount: normalized.messageCount,
+        unreadCount: Math.max(normalized.userMessageCount - normalized.adminMessageCount, 0)
+    };
+}
+
+function createChatSession({ name, email, phone = '', propertyTitle = '', firstMessage }) {
+    const timestamp = new Date().toISOString();
+    const session = normalizeChatSession({
+        id: crypto.randomUUID(),
+        name,
+        email,
+        phone,
+        propertyTitle,
+        status: 'open',
+        createdAt: timestamp,
+        updatedAt: timestamp,
+        messages: [
+            {
+                id: crypto.randomUUID(),
+                sender: 'user',
+                text: firstMessage,
+                createdAt: timestamp
+            }
+        ]
+    });
+
+    chatSessions.unshift(session);
+    persistChatSessions();
+    return session;
+}
+
+function appendChatMessageToSession(session, sender, text) {
+    const message = normalizeChatMessage({
+        sender,
+        text,
+        createdAt: new Date().toISOString()
+    });
+
+    session.messages.push(message);
+    session.updatedAt = message.createdAt;
+    if (sender === 'admin') {
+        session.lastViewedByAdminAt = message.createdAt;
+    }
+
+    const normalized = normalizeChatSession(session);
+    Object.assign(session, normalized);
+    persistChatSessions();
+    return session;
+}
+
+function getChatSessionById(sessionId) {
+    return chatSessions.find((session) => session.id === sessionId);
 }
 
 function sanitizePublicProperty(property) {
@@ -702,16 +817,18 @@ function parsePrice(priceStr) {
 
 // Get all property locations for map
 app.get('/api/locations', (req, res) => {
-    const locations = allProperties.map(p => ({
-        id: p.id,
-        title: p.title,
-        location: p.location,
-        price: p.price,
-        purpose: p.purpose,
-        lat: p.lat,
-        lng: p.lng,
-        image: p.image
-    }));
+    const locations = getPublicProperties()
+        .filter((property) => Number.isFinite(Number(property.lat)) && Number.isFinite(Number(property.lng)))
+        .map((property) => ({
+            id: property.id,
+            title: property.title,
+            location: property.location,
+            price: property.price,
+            purpose: property.purpose,
+            lat: Number(property.lat),
+            lng: Number(property.lng),
+            image: property.image
+        }));
     res.json(locations);
 });
 
@@ -853,7 +970,7 @@ app.post('/api/contact', (req, res) => {
 
 // Chat/Inquiry submission
 app.post('/api/chat', (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, phone, message, sessionId, propertyTitle } = req.body;
 
     if (!name || !email || !message) {
         return res.status(400).json({
@@ -862,11 +979,44 @@ app.post('/api/chat', (req, res) => {
         });
     }
 
+    const normalizedName = String(name).trim();
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const normalizedMessage = String(message).trim();
+    const normalizedPhone = phone ? String(phone).trim() : '';
+    const normalizedPropertyTitle = propertyTitle ? String(propertyTitle).trim() : '';
+    let session = sessionId ? getChatSessionById(String(sessionId)) : null;
+
+    if (session) {
+        const identityMismatch = session.email && session.email !== normalizedEmail;
+        if (identityMismatch) {
+            return res.status(403).json({
+                success: false,
+                message: 'Chat session does not match this email.'
+            });
+        }
+        session.name = normalizedName;
+        session.email = normalizedEmail;
+        session.phone = normalizedPhone || session.phone;
+        session.propertyTitle = normalizedPropertyTitle || session.propertyTitle;
+        appendChatMessageToSession(session, 'user', normalizedMessage);
+    } else {
+        session = createChatSession({
+            name: normalizedName,
+            email: normalizedEmail,
+            phone: normalizedPhone,
+            propertyTitle: normalizedPropertyTitle,
+            firstMessage: normalizedMessage
+        });
+    }
+
     const chatInquiry = buildLeadRecord({
         channel: 'chat',
-        name: String(name).trim(),
-        email: String(email).trim().toLowerCase(),
-        message: String(message).trim(),
+        sessionId: session.id,
+        name: normalizedName,
+        email: normalizedEmail,
+        phone: normalizedPhone,
+        propertyTitle: normalizedPropertyTitle,
+        message: normalizedMessage,
         handledBy: ADMIN_PROFILE.name
     });
 
@@ -876,11 +1026,30 @@ app.post('/api/chat', (req, res) => {
     console.log('Chat inquiry:', chatInquiry);
     res.json({
         success: true,
+        sessionId: session.id,
+        thread: session,
         message: adminSettings.adminAvailable
             ? 'Admin is available now. You can continue one-to-one in chat or switch to WhatsApp.'
             : 'Message received. Our team will continue the conversation with you shortly.',
         directConversation: adminSettings.adminAvailable,
         whatsappUrl: ADMIN_PROFILE.whatsappUrl
+    });
+});
+
+app.get('/api/chat/session/:id', (req, res) => {
+    const session = getChatSessionById(String(req.params.id));
+
+    if (!session) {
+        return res.status(404).json({
+            success: false,
+            message: 'Chat session not found.'
+        });
+    }
+
+    res.json({
+        success: true,
+        thread: session,
+        directConversation: adminSettings.adminAvailable
     });
 });
 
@@ -930,18 +1099,22 @@ app.get('/api/admin/stats', (req, res) => {
         admin: ADMIN_PROFILE,
         campaign: ACTIVE_CAMPAIGN,
         settings: adminSettings,
+        runtime: {
+            dataDir,
+            persistentStorageConfigured: Boolean(process.env.DATA_DIR)
+        },
         properties: {
             total: allProperties.length,
             byPurpose: propertyCounts,
             byApproval: approvalCounts
         },
         contacts: contactLeads.length,
-        chats: chatLeads.length,
+        chats: chatSessions.length,
         subscriptions: newsletterSubscriptions.length,
         interests: propertyInterests.length,
         latestProperty: allProperties[0] ? sanitizePublicProperty(allProperties[0]) : null,
         latestContact: contactLeads[0] || null,
-        latestChat: chatLeads[0] || null,
+        latestChat: chatSessions[0] ? summarizeChatSession(chatSessions[0]) : null,
         latestInterest: propertyInterests[0] || null
     });
 });
@@ -960,7 +1133,7 @@ app.get('/api/admin/contacts', (req, res) => {
 });
 
 app.get('/api/admin/chats', (req, res) => {
-    res.json(chatLeads);
+    res.json(chatSessions.map(summarizeChatSession));
 });
 
 app.get('/api/admin/subscriptions', (req, res) => {
@@ -974,11 +1147,73 @@ app.get('/api/admin/interests', (req, res) => {
 app.get('/api/admin/conversations', (req, res) => {
     const conversations = [
         ...contactLeads.map((lead) => ({ ...lead, source: 'enquiry' })),
-        ...chatLeads.map((lead) => ({ ...lead, source: 'chat' })),
+        ...chatSessions.map((session) => ({
+            id: session.id,
+            source: 'chat',
+            name: session.name,
+            email: session.email,
+            phone: session.phone,
+            propertyTitle: session.propertyTitle,
+            message: session.lastMessageText,
+            createdAt: session.lastMessageAt
+        })),
         ...propertyInterests.map((lead) => ({ ...lead, source: 'interest' }))
     ].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     res.json(conversations);
+});
+
+app.get('/api/admin/chat-sessions', (req, res) => {
+    const sessions = chatSessions
+        .map(summarizeChatSession)
+        .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    res.json(sessions);
+});
+
+app.get('/api/admin/chat-sessions/:id', (req, res) => {
+    const session = getChatSessionById(String(req.params.id));
+
+    if (!session) {
+        return res.status(404).json({
+            success: false,
+            message: 'Chat session not found.'
+        });
+    }
+
+    session.lastViewedByAdminAt = new Date().toISOString();
+    persistChatSessions();
+
+    res.json({
+        success: true,
+        thread: session
+    });
+});
+
+app.post('/api/admin/chat-sessions/:id/messages', (req, res) => {
+    const session = getChatSessionById(String(req.params.id));
+    const message = String(req.body.message || '').trim();
+
+    if (!session) {
+        return res.status(404).json({
+            success: false,
+            message: 'Chat session not found.'
+        });
+    }
+
+    if (!message) {
+        return res.status(400).json({
+            success: false,
+            message: 'Reply message is required.'
+        });
+    }
+
+    appendChatMessageToSession(session, 'admin', message);
+
+    res.json({
+        success: true,
+        thread: session
+    });
 });
 
 app.patch('/api/admin/settings', (req, res) => {

@@ -49,6 +49,7 @@
                     <a class="admin-btn" href="/#properties">View Public Site</a>
                     <a class="admin-btn" href="https://wa.me/918956923456" target="_blank" rel="noreferrer">Open WhatsApp</a>
                 </div>
+                <div class="admin-runtime-banner" id="admin-runtime-banner"></div>
                 <div class="admin-stats-grid" id="admin-stats-grid"></div>
                 <p class="admin-note">Listings only appear on the public site after you publish them here.</p>
             </div>
@@ -163,14 +164,39 @@
         <section class="admin-page" id="conversations-page">
             <section class="admin-panel-card admin-section">
                 <h2>Buyer Messages</h2>
-                <p>All chat, enquiry, and interest messages come here for admin follow-up.</p>
+                <p>Select a buyer on the left and reply directly from this page. Contact form and interest leads stay available below.</p>
+                <div class="admin-chat-layout">
+                    <div class="admin-chat-sidebar">
+                        <div class="admin-filterbar">
+                            <input type="search" id="chat-session-search" placeholder="Search buyer, property, or email">
+                        </div>
+                        <div id="chat-session-list"></div>
+                    </div>
+                    <div class="admin-chat-main">
+                        <div class="admin-chat-thread-head" id="admin-chat-thread-head">
+                            <h3>Select a buyer to open the conversation</h3>
+                            <p>The buyer will receive your reply in the website chat box when they reopen the page or stay online.</p>
+                        </div>
+                        <div class="admin-chat-thread" id="admin-chat-thread"></div>
+                        <form class="admin-chat-reply" id="admin-chat-reply-form">
+                            <textarea id="admin-chat-reply-input" rows="3" placeholder="Type your reply to the selected buyer"></textarea>
+                            <div class="admin-actions">
+                                <button type="submit" class="admin-btn primary">Send Reply</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            <section class="admin-panel-card admin-section">
+                <h2>Other Buyer Leads</h2>
+                <p>These enquiries and interest forms still need your follow-up, even if they are not in direct chat.</p>
                 <div class="admin-filterbar">
                     <input type="search" id="conversation-search" placeholder="Search buyer, property, phone, or message">
                     <select id="conversation-source-filter">
-                        <option value="all">All Message Types</option>
-                        <option value="chat">Chat Box</option>
+                        <option value="all">All Lead Types</option>
                         <option value="enquiry">Contact Form</option>
                         <option value="interest">Property Interest</option>
+                        <option value="chat">Chat Summary</option>
                     </select>
                 </div>
                 <div id="conversations-table"></div>

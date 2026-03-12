@@ -5,9 +5,12 @@ const adminState = {
     properties: [],
     interests: [],
     conversations: [],
+    chatSessions: [],
+    activeChatSessionId: null,
     filters: {
         conversationQuery: '',
-        conversationSource: 'all'
+        conversationSource: 'all',
+        chatSessionQuery: ''
     }
 };
 
@@ -18,27 +21,40 @@ document.addEventListener('DOMContentLoaded', () => {
     initConversationFilters();
     initAdminPages();
     initAvailabilityControls();
+    initAdminChat();
+    startAdminChatPolling();
 });
 
 async function loadAdminDashboard() {
     try {
-        const [statsRes, propertiesRes, interestsRes, conversationsRes] = await Promise.all([
+        const [statsRes, propertiesRes, interestsRes, conversationsRes, chatSessionsRes] = await Promise.all([
             fetch('/api/admin/stats'),
             fetch('/api/admin/properties'),
             fetch('/api/admin/interests'),
-            fetch('/api/admin/conversations')
+            fetch('/api/admin/conversations'),
+            fetch('/api/admin/chat-sessions')
         ]);
 
         adminState.stats = await statsRes.json();
         adminState.properties = await propertiesRes.json();
         adminState.interests = await interestsRes.json();
         adminState.conversations = await conversationsRes.json();
+        adminState.chatSessions = await chatSessionsRes.json();
+        if (!adminState.activeChatSessionId && adminState.chatSessions.length > 0) {
+            adminState.activeChatSessionId = adminState.chatSessions[0].id;
+        }
+        if (adminState.activeChatSessionId && !adminState.chatSessions.some((session) => session.id === adminState.activeChatSessionId)) {
+            adminState.activeChatSessionId = adminState.chatSessions[0]?.id || null;
+        }
 
         renderStats();
         renderProfileCard();
+        renderRuntimeBanner();
         renderPropertyLists();
         renderInterests();
         renderConversations();
+        renderChatSessions();
+        await renderActiveChatThread();
         renderAdminNotes();
         renderRecentActivity();
         renderFollowUpQueue();
@@ -106,6 +122,21 @@ function renderProfileCard() {
             </div>
         </div>
     `;
+}
+
+function renderRuntimeBanner() {
+    const el = document.getElementById('admin-runtime-banner');
+    const runtime = adminState.stats?.runtime;
+    if (!el || !runtime) return;
+
+    if (runtime.persistentStorageConfigured) {
+        el.className = 'admin-runtime-banner ok';
+        el.innerHTML = `<strong>Storage ready:</strong> Admin data is using <code>${runtime.dataDir}</code>.`;
+        return;
+    }
+
+    el.className = 'admin-runtime-banner warn';
+    el.innerHTML = '<strong>Render note:</strong> Persistent storage is not configured. Listings, chat, and admin changes can reset after redeploy or restart on Render.';
 }
 
 function renderAvailabilityControls() {
@@ -234,6 +265,92 @@ function renderConversations() {
             `).join('')}
         </div>
     `;
+}
+
+function renderChatSessions() {
+    const el = document.getElementById('chat-session-list');
+    if (!el) return;
+
+    const sessions = adminState.chatSessions.filter((session) => {
+        const haystack = [session.name, session.email, session.phone, session.propertyTitle, session.lastMessageText]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
+        return !adminState.filters.chatSessionQuery || haystack.includes(adminState.filters.chatSessionQuery);
+    });
+
+    if (sessions.length === 0) {
+        el.innerHTML = '<div class="admin-empty">No direct chat users yet.</div>';
+        return;
+    }
+
+    el.innerHTML = sessions.map((session) => `
+        <button type="button" class="admin-thread-item ${session.id === adminState.activeChatSessionId ? 'active' : ''}" data-session-id="${session.id}">
+            <div class="admin-thread-top">
+                <strong>${session.name || 'Visitor'}</strong>
+                <span>${formatAdminDate(session.lastMessageAt)}</span>
+            </div>
+            <p>${session.propertyTitle || session.email || 'General property assistance'}</p>
+            <div class="admin-thread-meta">
+                <span>${session.unreadCount > 0 ? `${session.unreadCount} waiting` : 'Up to date'}</span>
+                <span>${truncateText(session.lastMessageText || 'No messages yet', 60)}</span>
+            </div>
+        </button>
+    `).join('');
+
+    el.querySelectorAll('[data-session-id]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            adminState.activeChatSessionId = button.dataset.sessionId;
+            renderChatSessions();
+            await renderActiveChatThread();
+        });
+    });
+}
+
+async function renderActiveChatThread() {
+    const head = document.getElementById('admin-chat-thread-head');
+    const threadEl = document.getElementById('admin-chat-thread');
+    const form = document.getElementById('admin-chat-reply-form');
+    const input = document.getElementById('admin-chat-reply-input');
+
+    if (!head || !threadEl || !form || !input) return;
+
+    if (!adminState.activeChatSessionId) {
+        threadEl.innerHTML = '<div class="admin-empty">Choose a buyer from the left to start replying here.</div>';
+        form.style.display = 'none';
+        return;
+    }
+
+    form.style.display = 'block';
+
+    try {
+        const response = await fetch(`/api/admin/chat-sessions/${adminState.activeChatSessionId}`);
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Could not load this conversation.');
+        }
+
+        const thread = result.thread;
+        head.innerHTML = `
+            <h3>${thread.name || 'Visitor'}</h3>
+            <p>${thread.propertyTitle || 'General enquiry'}${thread.email ? ` | ${thread.email}` : ''}${thread.phone ? ` | ${thread.phone}` : ''}</p>
+        `;
+
+        threadEl.innerHTML = thread.messages.length
+            ? thread.messages.map((message) => `
+                <div class="admin-chat-bubble ${message.sender === 'admin' ? 'admin' : 'user'}">
+                    <p>${message.text}</p>
+                    <span>${formatAdminDate(message.createdAt, true)}</span>
+                </div>
+            `).join('')
+            : '<div class="admin-empty">No messages in this conversation yet.</div>';
+
+        threadEl.scrollTop = threadEl.scrollHeight;
+    } catch (error) {
+        console.error('Chat thread load failed:', error);
+        threadEl.innerHTML = '<div class="admin-empty">Could not load the selected conversation.</div>';
+    }
 }
 
 function renderAdminNotes() {
@@ -370,6 +487,7 @@ function renderSellerSupport() {
 function initConversationFilters() {
     const searchInput = document.getElementById('conversation-search');
     const sourceFilter = document.getElementById('conversation-source-filter');
+    const chatSearchInput = document.getElementById('chat-session-search');
 
     if (searchInput) {
         searchInput.addEventListener('input', () => {
@@ -384,6 +502,99 @@ function initConversationFilters() {
             renderConversations();
         });
     }
+
+    if (chatSearchInput) {
+        chatSearchInput.addEventListener('input', () => {
+            adminState.filters.chatSessionQuery = chatSearchInput.value.trim().toLowerCase();
+            renderChatSessions();
+        });
+    }
+}
+
+function initAdminChat() {
+    const form = document.getElementById('admin-chat-reply-form');
+    const input = document.getElementById('admin-chat-reply-input');
+
+    if (input) {
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                form?.requestSubmit();
+            }
+        });
+    }
+
+    if (!form || !input) return;
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const message = input.value.trim();
+
+        if (!adminState.activeChatSessionId) {
+            showAdminToast('info', 'Select Buyer', 'Choose a buyer from the list first.');
+            return;
+        }
+
+        if (!message) {
+            showAdminToast('info', 'Reply Needed', 'Type a message before sending.');
+            return;
+        }
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+
+        try {
+            const response = await fetch(`/api/admin/chat-sessions/${adminState.activeChatSessionId}/messages`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message })
+            });
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Reply could not be sent.');
+            }
+
+            input.value = '';
+            await loadAdminDashboard();
+        } catch (error) {
+            console.error('Admin reply failed:', error);
+            showAdminToast('error', 'Reply Failed', error.message || 'Could not send the reply.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Reply';
+        }
+    });
+}
+
+function startAdminChatPolling() {
+    setInterval(async () => {
+        if (!document.body.classList.contains('admin-body')) return;
+        const replyInput = document.getElementById('admin-chat-reply-input');
+        if (replyInput && document.activeElement === replyInput && replyInput.value.trim()) return;
+
+        try {
+            const [chatSessionsRes, conversationsRes] = await Promise.all([
+                fetch('/api/admin/chat-sessions'),
+                fetch('/api/admin/conversations')
+            ]);
+
+            adminState.chatSessions = await chatSessionsRes.json();
+            adminState.conversations = await conversationsRes.json();
+            if (!adminState.activeChatSessionId && adminState.chatSessions.length > 0) {
+                adminState.activeChatSessionId = adminState.chatSessions[0].id;
+            }
+
+            renderChatSessions();
+            renderConversations();
+            await renderActiveChatThread();
+        } catch (error) {
+            console.error('Admin chat polling failed:', error);
+        }
+    }, 8000);
 }
 
 function initAvailabilityControls() {
@@ -585,4 +796,20 @@ function showAdminToast(type, title, message) {
 
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 5000);
+}
+
+function formatAdminDate(value, withTime = false) {
+    if (!value) return '';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+
+    return withTime
+        ? date.toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+        : date.toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+function truncateText(value, maxLength) {
+    const text = String(value || '');
+    if (text.length <= maxLength) return text;
+    return `${text.slice(0, maxLength - 1)}...`;
 }
